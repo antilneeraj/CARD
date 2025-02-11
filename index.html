@@ -1,0 +1,143 @@
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: "Plus Jakarta Sans";
+      background: url("/assets/Lines.png") no-repeat;
+    }
+
+    .ticket {
+      width: 522px;
+      height: 256px;
+      border: solid+2px#000;
+      padding: 20px;
+      border-radius: 20px;
+      position: relative;
+    }
+
+    .header {
+      width: fit-content;
+      font-size: 22px;
+      font-weight: light;
+    }
+
+    .logos {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+    }
+
+    .logos> :nth-child(3) {
+      justify-self: end;
+      margin-right: 50px;
+    }
+
+    .logos> :nth-child(2) {
+      justify-self: center;
+    }
+
+    .details {
+      display: flex;
+      flex-flow: column;
+      gap: 8px;
+    }
+
+    .details div {
+      line-height: normal;
+    }
+
+    .underline {
+      text-align: right;
+      text-decoration-line: underline;
+      text-transform: uppercase;
+      font-size: 8px;
+      width: 54px;
+      font-weight: 300;
+      line-height: normal;
+      text-decoration-style: solid;
+      text-decoration-skip-ink: auto;
+      text-decoration-thickness: auto;
+      text-underline-offset: auto;
+      text-underline-position: from-font;
+    }
+
+    .alignleft {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 400;
+      width: 175px;
+    }
+
+    .flexbetween {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .flexrow {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .abpos {
+      position: absolute;
+      bottom: 0;
+      right: 18px;
+    }
+  </style>
+  <title>Card</title>
+</head>
+
+<body>
+  <div class="ticket">
+    <div class="logos">
+      <div style="height: 43px;aspect-ratio: 43/39; width: 39px;border-radius: 50%;"><img src="/assets/md.svg"
+          alt="mdu" /></div>
+      <div class="header">Company Name</div>
+      <div style="height: 43px; width: 39px;border-radius: 50%;"><img src="/assets/niit.svg" alt="niit" /></div>
+    </div>
+    <div class="flexbetween" style="margin-top: 20px;">
+      <div class="details">
+        <div class="flexrow"><span class="underline">S No.</span><span class="alignleft" id="S.No">1</span></div>
+        <div class="flexrow"><span class="underline">Name</span><span class="alignleft" id="Name">xyz</span></div>
+        <div class="flexrow">
+          <span class="underline">Email ID</span><span class="alignleft" id="Email ID">someone@example.com</span>
+        </div>
+        <div class="flexrow"><span class="underline">Roll No</span><span class="alignleft" id="Roll No">123456</span></div>
+        <div class="flexrow">
+          <span class="underline">Course</span><span class="alignleft" id="Course"> Course Name</span>
+        </div>
+        <div class="flexrow"><span class="underline">College</span><span class="alignleft" id="College">College
+            Name</span></div>
+      </div>
+      <div><span class="underline">Waiting Room No.</span><span class="alignleft" id="waiting">101</span></div>
+    </div>
+    <div>
+      <div class="abpos"><span class="underline">Ticket No.</span><span class="alignleft" id="ticket">1</span></div>
+    </div>
+    <div style="position:absolute;padding:20px 0;bottom:0;right: 20px;">
+      <img id="logo" src="/assets/genpact.png" style="aspect-ratio: 84/31;width: 252px;height: 93px;flex-shrink: 0;"
+        alt="companylogo">
+    </div>
+  </div>
+  <p style="border: solid+1px#000;border-style: dashed;margin:8px 0; width: 100%;"></p>
+</body>
+
+</html>
