@@ -2,9 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const puppeteer = require("puppeteer");
 const csvParser = require("csv-parser");
-const axios = require("axios");
 
-const DATA_FILE = "candidates.csv"; // Update this with your CSV file
+const DATA_FILE = "data.csv"; // Update this with your CSV file
 const OUTPUT_DIR = path.join(__dirname, "pdfs");
 const TRACK_FILE = "last_processed.json";
 
@@ -217,9 +216,8 @@ async function generateTicketHTML(data, company, count, applied) {
     </div>
     <div>
       <span class="underline">Waiting Room No.</span>
-      <span class="alignleft" id="waiting">&nbsp;&nbsp;${
-        company.waitingRoom
-      }</span>
+      <span class="alignleft" id="waiting">&nbsp;&nbsp;${company.waitingRoom
+    }</span>
     </div>
   </div>
   <div>
@@ -232,9 +230,8 @@ async function generateTicketHTML(data, company, count, applied) {
     <img id="logo" src="data:image/png;base64,${logoBase64}" style="aspect-ratio: 84/31;width: 200px;height: 70px;flex-shrink: 0;" alt="companylogo">
   </div>
 </div>
-    ${
-      count < applied.length
-        ? `<p style="margin:8px 0; width: 100%; height: 1px; background: repeating-linear-gradient(to right, black, black 10px, transparent 10px, transparent 15px);"></p>`:``
+    ${count < applied.length
+      ? `<p style="margin:8px 0; width: 100%; height: 1px; background: repeating-linear-gradient(to right, black, black 10px, transparent 10px, transparent 15px);"></p>` : ``
     }
 `;
 }
@@ -249,12 +246,56 @@ async function generatePDF(html, outputPath) {
   await browser.close();
 }
 
+const CSV_OUTPUT_DIR = path.join(__dirname, "csv");
+
+// Ensure the CSV output directory exists
+if (!fs.existsSync(CSV_OUTPUT_DIR)) {
+  fs.mkdirSync(CSV_OUTPUT_DIR, { recursive: true });
+}
+
+// Function to create company CSV files
+function writeCompanyCSV(companyName, studentData) {
+  const safeCompanyName = companyName.replace(/\s+/g, "_");
+  const csvPath = path.join(CSV_OUTPUT_DIR, `${safeCompanyName}.csv`);
+
+  // CSV headers
+  const headers = [
+    "S.No",
+    "Name",
+    "Email ID",
+    "Roll No",
+    "Course",
+    "College",
+    "Ticket No"
+  ];
+
+  // Create CSV content
+  const csvContent = [
+    headers.join(','),
+    ...studentData.map(row => [
+      row.sno,
+      row.name,
+      row.email,
+      row.rollno,
+      row.course,
+      row.college,
+      row.ticketNo
+    ].join(','))
+  ].join('\n');
+
+  fs.writeFileSync(csvPath, csvContent);
+  console.log(`CSV generated for ${companyName}:`, csvPath);
+}
+
 // Process CSV file
 async function processCSV() {
   const lastProcessed = getLastProcessed();
   const data = [];
   let pdfCount = 0;
   let serialNo = 1;
+
+  // Create object to store company-wise student data
+  const companyData = {};
 
   fs.createReadStream(DATA_FILE)
     .pipe(csvParser())
@@ -411,12 +452,26 @@ async function processCSV() {
               ticketNo,
             };
             count++;
-            combinedHTML += await generateTicketHTML(
-              ticketData,
-              company,
-              count,
-              companiesApplied
-            );
+            // combinedHTML += await generateTicketHTML(
+            //   ticketData,
+            //   company,
+            //   count,
+            //   companiesApplied
+            // );
+
+            if (!companyData[companyName]) {
+              companyData[companyName] = [];
+            }
+
+            companyData[companyName].push({
+              sno: serialNo,
+              name: row["Name"],
+              email: row["Email ID"],
+              rollno: row["Roll No"],
+              course: row["Course"],
+              college: row["College"],
+              ticketNo
+            });
           } else {
             console.log("Company not found:", companyName);
           }
@@ -440,7 +495,7 @@ async function processCSV() {
           `${serialNo}_${safeName}_${safeRollNo}.pdf`
         );
         try {
-          await generatePDF(combinedHTML, pdfPath);
+          // await generatePDF(combinedHTML, pdfPath);
           pdfCount++;
           console.log("PDF generated:", pdfPath);
         } catch (error) {
@@ -450,9 +505,16 @@ async function processCSV() {
         serialNo++;
         updateLastProcessed(serialNo);
       }
+
+      // Generate CSV files for each company
+      for (const [companyName, students] of Object.entries(companyData)) {
+        writeCompanyCSV(companyName, students);
+      }
+
       console.log(
         `PDF Generation Completed! Total PDFs generated: ${pdfCount}`
       );
+      console.log(`CSV files generated for ${Object.keys(companyData).length} companies`);
     })
     .on("error", (error) => {
       console.error("Error processing CSV file:", error);
