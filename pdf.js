@@ -83,7 +83,7 @@ const companies = {
   Miniso: {
     name: "Miniso",
     waitingRoom: "FF07",
-    logo: "comp/gigroup.png",
+    logo: "comp/miniso.png",
     ticketSeries: 12000,
   },
   "GI Group": {
@@ -125,7 +125,7 @@ const companies = {
   "Bharti Associates": {
     name: "Bharti Associates",
     waitingRoom: "FF11",
-    logo: "",
+    logo: "comp/bharti.png",
     ticketSeries: 19000,
   },
   "TruWorth Healthcare": {
@@ -216,8 +216,9 @@ async function generateTicketHTML(data, company, count, applied) {
     </div>
     <div>
       <span class="underline">Waiting Room No.</span>
-      <span class="alignleft" id="waiting">&nbsp;&nbsp;${company.waitingRoom
-    }</span>
+      <span class="alignleft" id="waiting">&nbsp;&nbsp;${
+        company.waitingRoom
+      }</span>
     </div>
   </div>
   <div>
@@ -230,8 +231,10 @@ async function generateTicketHTML(data, company, count, applied) {
     <img id="logo" src="data:image/png;base64,${logoBase64}" style="aspect-ratio: 84/31;width: 200px;height: 70px;flex-shrink: 0;" alt="companylogo">
   </div>
 </div>
-    ${count < applied.length
-      ? `<p style="margin:8px 0; width: 100%; height: 1px; background: repeating-linear-gradient(to right, black, black 10px, transparent 10px, transparent 15px);"></p>` : ``
+    ${
+      count < applied.length
+        ? `<p style="margin:8px 0; width: 100%; height: 1px; background: repeating-linear-gradient(to right, black, black 10px, transparent 10px, transparent 15px);"></p>`
+        : ``
     }
 `;
 }
@@ -242,7 +245,12 @@ async function generatePDF(html, outputPath) {
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
   await page.emulateMediaType("screen");
-  await page.pdf({ path: outputPath, format: "A4", scale: 1.35, printBackground: true });
+  await page.pdf({
+    path: outputPath,
+    format: "A4",
+    scale: 1.35,
+    printBackground: true,
+  });
   await browser.close();
 }
 
@@ -258,7 +266,11 @@ function escapeCsvValue(value) {
   if (value === null || value === undefined) return '""';
   const stringValue = String(value);
   // If the value contains quotes, commas, or newlines, wrap it in quotes and escape internal quotes
-  if (stringValue.includes('"') || stringValue.includes(',') || stringValue.includes('\n')) {
+  if (
+    stringValue.includes('"') ||
+    stringValue.includes(",") ||
+    stringValue.includes("\n")
+  ) {
     return `"${stringValue.replace(/"/g, '""')}"`;
   }
   return stringValue;
@@ -277,22 +289,26 @@ function writeCompanyCSV(companyName, studentData) {
     "Roll No",
     "Course",
     "College",
-    "Ticket No"
+    "Ticket No",
   ];
 
   // Create CSV content
   const csvContent = [
-    headers.map(escapeCsvValue).join(','),
-    ...studentData.map(row => [
-      row.sno,
-      row.name,
-      row.email,
-      row.rollno,
-      row.course,
-      row.college,
-      row.ticketNo
-    ].map(escapeCsvValue).join(','))
-  ].join('\n');
+    headers.map(escapeCsvValue).join(","),
+    ...studentData.map((row) =>
+      [
+        row.sno,
+        row.name,
+        row.email,
+        row.rollno,
+        row.course,
+        row.college,
+        row.ticketNo,
+      ]
+        .map(escapeCsvValue)
+        .join(",")
+    ),
+  ].join("\n");
 
   fs.writeFileSync(csvPath, csvContent);
   console.log(`CSV generated for ${companyName}:`, csvPath);
@@ -312,16 +328,17 @@ async function processCSV() {
     .pipe(csvParser())
     .on("data", (row) => {
       const sno = parseInt(row["S.No"]);
-      //       if (sno > lastProcessed.lastId) {
-      data.push(row);
-      //       }
+      // if (sno > lastProcessed.lastId) {
+        data.push(row);
+      // }
     })
     .on("end", async () => {
       console.log("CSV processing completed. Rows to process:", data.length);
       for (const row of data) {
         const companiesApplied = row["Companies Applied To"]
           .split(",")
-          .map((c) => c.trim()).slice(0, 3);
+          .map((c) => c.trim())
+          .slice(0, 3);
 
         const userDir = path.join(
           OUTPUT_DIR,
@@ -463,12 +480,12 @@ async function processCSV() {
               ticketNo,
             };
             count++;
-            // combinedHTML += await generateTicketHTML(
-            //   ticketData,
-            //   company,
-            //   count,
-            //   companiesApplied
-            // );
+            combinedHTML += await generateTicketHTML(
+              ticketData,
+              company,
+              count,
+              companiesApplied
+            );
 
             if (!companyData[companyName]) {
               companyData[companyName] = [];
@@ -481,7 +498,7 @@ async function processCSV() {
               rollno: row["Roll No"],
               course: row["Course"],
               college: row["College"],
-              ticketNo
+              ticketNo,
             });
           } else {
             console.log("Company not found:", companyName);
@@ -525,7 +542,9 @@ async function processCSV() {
       console.log(
         `PDF Generation Completed! Total PDFs generated: ${pdfCount}`
       );
-      console.log(`CSV files generated for ${Object.keys(companyData).length} companies`);
+      console.log(
+        `CSV files generated for ${Object.keys(companyData).length} companies`
+      );
     })
     .on("error", (error) => {
       console.error("Error processing CSV file:", error);

@@ -1,4 +1,5 @@
 node_modules
+*.csv
 A
 B
 C
