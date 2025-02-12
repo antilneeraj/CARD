@@ -253,6 +253,17 @@ if (!fs.existsSync(CSV_OUTPUT_DIR)) {
   fs.mkdirSync(CSV_OUTPUT_DIR, { recursive: true });
 }
 
+// Function to escape and quote CSV values
+function escapeCsvValue(value) {
+  if (value === null || value === undefined) return '""';
+  const stringValue = String(value);
+  // If the value contains quotes, commas, or newlines, wrap it in quotes and escape internal quotes
+  if (stringValue.includes('"') || stringValue.includes(',') || stringValue.includes('\n')) {
+    return `"${stringValue.replace(/"/g, '""')}"`;
+  }
+  return stringValue;
+}
+
 // Function to create company CSV files
 function writeCompanyCSV(companyName, studentData) {
   const safeCompanyName = companyName.replace(/\s+/g, "_");
@@ -271,7 +282,7 @@ function writeCompanyCSV(companyName, studentData) {
 
   // Create CSV content
   const csvContent = [
-    headers.join(','),
+    headers.map(escapeCsvValue).join(','),
     ...studentData.map(row => [
       row.sno,
       row.name,
@@ -280,7 +291,7 @@ function writeCompanyCSV(companyName, studentData) {
       row.course,
       row.college,
       row.ticketNo
-    ].join(','))
+    ].map(escapeCsvValue).join(','))
   ].join('\n');
 
   fs.writeFileSync(csvPath, csvContent);
