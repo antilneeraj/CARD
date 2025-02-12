@@ -61,7 +61,6 @@
     .details div {
       line-height: normal;
     }
-
     .underline {
       text-align: right;
       text-decoration-line: underline;
@@ -72,8 +71,18 @@
       line-height: normal;
       text-decoration-style: solid;
       text-decoration-skip-ink: auto;
-      text-decoration-thickness: auto;
-      text-underline-offset: auto;
+      text-underline-offset: 0.5px;
+      text-underline-position: from-font;
+    }
+    .underline-dupli {
+      text-align: right;
+      text-transform: uppercase;
+      font-size: 8px;
+      width: 54px;
+      font-weight: 300;
+      line-height: normal;
+      text-decoration-style: solid;
+      text-decoration-skip-ink: auto;
       text-underline-position: from-font;
     }
 
@@ -127,17 +136,18 @@
         <div class="flexrow"><span class="underline">College</span><span class="alignleft" id="College">College
             Name</span></div>
       </div>
-      <div><span class="underline">Waiting Room No.</span><span class="alignleft" id="waiting">101</span></div>
+      <div><span class="underline">Waiting Room No.</span><span class="alignleft" id="waiting">&nbsp;&nbsp;101</span></div>
     </div>
     <div>
-      <div class="abpos"><span class="underline">Ticket No.</span><span class="alignleft" id="ticket">1</span></div>
+      <div class="abpos"><span class="underline-dupli">Ticket No.</span><span class="alignleft" id="ticket">&nbsp;&nbsp;1</span></div>
     </div>
     <div style="position:absolute;padding:20px 0;bottom:0;right: 20px;">
-      <img id="logo" src="/assets/genpact.png" style="aspect-ratio: 84/31;width: 252px;height: 93px;flex-shrink: 0;"
+      <img id="logo" src="/assets/genpact.png" style="aspect-ratio: 84/31;width: 200px;height: 70px;flex-shrink: 0;"
         alt="companylogo">
     </div>
   </div>
-  <p style="border: solid+1px#000;border-style: dashed;margin:8px 0; width: 100%;"></p>
+
+  <p style="margin:8px 0; width: 100%; height: 2px; background: repeating-linear-gradient(to right, black, black 10px, transparent 10px, transparent 15px);"></p>
 </body>
 
 </html>

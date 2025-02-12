@@ -163,45 +163,80 @@ function getBase64FromFile(filePath) {
   const file = fs.readFileSync(filePath);
   return file.toString("base64");
 }
+const bgvector = getBase64FromFile(path.join(__dirname, "assets", "Lines.png"));
 
 // Function to generate ticket HTML
-async function generateTicketHTML(data, company) {
-  const logoBase64 = getBase64FromFile(path.join(__dirname, "assets", company.logo));
-  const mduLogoBase64 = getBase64FromFile(path.join(__dirname, "assets", "md.svg"));
-  const niitLogoBase64 = getBase64FromFile(path.join(__dirname, "assets", "niit.svg"));
+async function generateTicketHTML(data, company, count, applied) {
+  const logoBase64 = getBase64FromFile(
+    path.join(__dirname, "assets", company.logo)
+  );
+  const mduLogoBase64 = getBase64FromFile(
+    path.join(__dirname, "assets", "md.svg")
+  );
+  const niitLogoBase64 = getBase64FromFile(
+    path.join(__dirname, "assets", "niit.svg")
+  );
 
   return `
 <div class="ticket">
   <div class="logos">
-    <div style="height: 43px;aspect-ratio: 43/39; width: 39px;border-radius: 50%;"><img src="data:image/svg+xml;base64,${mduLogoBase64}"
-        alt="mdu" /></div>
+    <div style="height: 43px;aspect-ratio: 43/39; width: 39px;border-radius: 50%;">
+      <img src="data:image/svg+xml;base64,${mduLogoBase64}" alt="mdu" />
+    </div>
     <div class="header">${company.name}</div>
-    <div style="height: 43px; width: 39px;border-radius: 50%;"><img src="data:image/svg+xml;base64,${niitLogoBase64}" alt="niit" /></div>
+    <div style="height: 43px; width: 39px;border-radius: 50%;">
+      <img src="data:image/svg+xml;base64,${niitLogoBase64}" alt="niit" />
+    </div>
   </div>
   <div class="flexbetween" style="margin-top: 20px;">
     <div class="details">
-      <div class="flexrow"><span class="underline">S No.</span><span class="alignleft" id="S.No">${data.sno}</span></div>
-      <div class="flexrow"><span class="underline">Name</span><span class="alignleft" id="Name">${data.name}</span></div>
       <div class="flexrow">
-        <span class="underline">Email ID</span><span class="alignleft" id="Email ID">${data.email}</span>
+        <span class="underline">S No.</span>
+        <span class="alignleft" id="S.No">${data.sno}</span>
       </div>
-      <div class="flexrow"><span class="underline">Roll No</span><span class="alignleft" id="Roll No">${data.rollno}</span></div>
       <div class="flexrow">
-        <span class="underline">Course</span><span class="alignleft" id="Course">${data.course}</span>
+        <span class="underline">Name</span>
+        <span class="alignleft" id="Name">${data.name}</span>
       </div>
-      <div class="flexrow"><span class="underline">College</span><span class="alignleft" id="College">${data.college}</span></div>
+      <div class="flexrow">
+        <span class="underline">Email ID</span>
+        <span class="alignleft" id="Email ID">${data.email}</span>
+      </div>
+      <div class="flexrow">
+        <span class="underline">Roll No</span>
+        <span class="alignleft" id="Roll No">${data.rollno}</span>
+      </div>
+      <div class="flexrow">
+        <span class="underline">Course</span>
+        <span class="alignleft" id="Course">${data.course}</span>
+      </div>
+      <div class="flexrow">
+        <span class="underline">College</span>
+        <span class="alignleft" id="College">${data.college}</span>
+      </div>
     </div>
-    <div><span class="underline">Waiting Room No.</span><span class="alignleft" id="waiting">${company.waitingRoom}</span></div>
+    <div>
+      <span class="underline">Waiting Room No.</span>
+      <span class="alignleft" id="waiting">&nbsp;&nbsp;${
+        company.waitingRoom
+      }</span>
+    </div>
   </div>
   <div>
-    <div class="abpos"><span class="underline">Ticket No.</span><span class="alignleft" id="ticket">${data.ticketNo}</span></div>
+    <div class="abpos">
+      <span class="underline-dupli">Ticket No.</span>
+      <span class="alignleft" id="ticket">&nbsp;&nbsp;${data.ticketNo}</span>
+    </div>
   </div>
   <div style="position:absolute;padding:20px 0;bottom:0;right: 20px;">
-    <img id="logo" src="data:image/png;base64,${logoBase64}" style="aspect-ratio: 84/31;width: 252px;height: 93px;flex-shrink: 0;"
-      alt="companylogo">
+    <img id="logo" src="data:image/png;base64,${logoBase64}" style="aspect-ratio: 84/31;width: 200px;height: 70px;flex-shrink: 0;" alt="companylogo">
   </div>
 </div>
-<p style="border: solid+1px#000;border-style: dashed;margin:8px 0; width: 100%;"></p>`;
+    ${
+      count < applied.length
+        ? `<p style="margin:8px 0; width: 100%; height: 1px; background: repeating-linear-gradient(to right, black, black 10px, transparent 10px, transparent 15px);"></p>`:``
+    }
+`;
 }
 
 // Function to generate PDF
@@ -210,7 +245,7 @@ async function generatePDF(html, outputPath) {
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
   await page.emulateMediaType("screen");
-  await page.pdf({ path: outputPath, format: "A4", scale: 1.35 });
+  await page.pdf({ path: outputPath, format: "A4", scale: 1.35, printBackground: true });
   await browser.close();
 }
 
@@ -234,7 +269,7 @@ async function processCSV() {
       for (const row of data) {
         const companiesApplied = row["Companies Applied To"]
           .split(",")
-          .map((c) => c.trim());
+          .map((c) => c.trim()).slice(0, 3);
 
         const userDir = path.join(
           OUTPUT_DIR,
@@ -264,7 +299,7 @@ async function processCSV() {
       align-items: center;
       height: 100vh;
       font-family: "Plus Jakarta Sans";
-      background: url("assets/Lines.png") no-repeat;
+      background: url("data:image/png;base64,${bgvector}") no-repeat;
     }
 
     .ticket {
@@ -316,8 +351,18 @@ async function processCSV() {
       line-height: normal;
       text-decoration-style: solid;
       text-decoration-skip-ink: auto;
-      text-decoration-thickness: auto;
-      text-underline-offset: auto;
+      text-underline-offset: 0.5px;
+      text-underline-position: from-font;
+    }
+          .underline-dupli {
+      text-align: right;
+      text-transform: uppercase;
+      font-size: 8px;
+      width: 54px;
+      font-weight: 300;
+      line-height: normal;
+      text-decoration-style: solid;
+      text-decoration-skip-ink: auto;
       text-underline-position: from-font;
     }
 
@@ -325,7 +370,7 @@ async function processCSV() {
       text-align: left;
       font-size: 12px;
       font-weight: 400;
-      width: 175px;
+      width: 200px;
       line-height: 1.2;
     }
 
@@ -351,7 +396,7 @@ async function processCSV() {
 </head>
 
 <body>`;
-
+        let count = 0;
         for (const companyName of companiesApplied) {
           if (companies[companyName]) {
             const company = companies[companyName];
@@ -365,7 +410,13 @@ async function processCSV() {
               college: row["College"],
               ticketNo,
             };
-            combinedHTML += await generateTicketHTML(ticketData, company);
+            count++;
+            combinedHTML += await generateTicketHTML(
+              ticketData,
+              company,
+              count,
+              companiesApplied
+            );
           } else {
             console.log("Company not found:", companyName);
           }
@@ -375,7 +426,19 @@ async function processCSV() {
 </body>
 </html>`;
 
-        const pdfPath = path.join(userDir, `${row["S.No"]}_${row["Name"]}.pdf`);
+        const safeName = row["Name"].trim().replace(/\s+/g, "_");
+        const safeRollNo = (() => {
+          const rollNo = row["Roll No"].trim();
+          try {
+            return BigInt(rollNo).toString();
+          } catch {
+            return rollNo.replace(/[^\w]+/g, "_");
+          }
+        })();
+        const pdfPath = path.join(
+          userDir,
+          `${serialNo}_${safeName}_${safeRollNo}.pdf`
+        );
         try {
           await generatePDF(combinedHTML, pdfPath);
           pdfCount++;
@@ -385,7 +448,7 @@ async function processCSV() {
         }
 
         serialNo++;
-        updateLastProcessed(parseInt(row["S.No"]));
+        updateLastProcessed(serialNo);
       }
       console.log(
         `PDF Generation Completed! Total PDFs generated: ${pdfCount}`
