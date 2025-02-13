@@ -18,121 +18,121 @@ const companies = {
     name: "Digicommerce Solution",
     waitingRoom: "SF16",
     logo: "comp/digicommerce.png",
-    ticketSeries: 1000,
+    ticketSeries: 1143,
   },
   "Tech mahindra": {
     name: "Tech mahindra",
     waitingRoom: "SF15",
     logo: "comp/techmahindra.png",
-    ticketSeries: 2000,
+    ticketSeries: 2497,
   },
   Genpact: {
     name: "Genpact",
     waitingRoom: "SF24",
     logo: "comp/genpact.png",
-    ticketSeries: 3000,
+    ticketSeries: 3262,
   },
   "iEnergizer Limited": {
     name: "iEnergizer Limited",
     waitingRoom: "FF14",
     logo: "comp/ienergizer.png",
-    ticketSeries: 4000,
+    ticketSeries: 4263,
   },
   "Ocube Services": {
     name: "Ocube Services",
     waitingRoom: "FF12",
     logo: "comp/ocube.png",
-    ticketSeries: 5000,
+    ticketSeries: 5021,
   },
   "Muthoot Finance": {
     name: "Muthoot Finance",
     waitingRoom: "GF02",
     logo: "comp/muthootfinance.png",
-    ticketSeries: 6000,
+    ticketSeries: 6146,
   },
   "HDB Finance": {
     name: "HDB Finance",
     waitingRoom: "SF18",
     logo: "comp/hdbfinance.png",
-    ticketSeries: 7000,
+    ticketSeries: 7091,
   },
   Swiggy: {
     name: "Swiggy",
     waitingRoom: "FF06",
     logo: "comp/swiggy.png",
-    ticketSeries: 8000,
+    ticketSeries: 8221,
   },
   "Niva bupa insurance": {
     name: "Niva bupa insurance",
     waitingRoom: "SF19",
     logo: "comp/nivabupa.png",
-    ticketSeries: 9000,
+    ticketSeries: 9034,
   },
   "Quess Corp Limited": {
     name: "Quess Corp Limited",
     waitingRoom: "FF10",
     logo: "comp/quess.png",
-    ticketSeries: 10000,
+    ticketSeries: 10140,
   },
   "Cogent E Services": {
     name: "Cogent E Services",
     waitingRoom: "SF20",
     logo: "comp/cogent.png",
-    ticketSeries: 11000,
+    ticketSeries: 11070,
   },
   Miniso: {
     name: "Miniso",
     waitingRoom: "FF07",
     logo: "comp/miniso.png",
-    ticketSeries: 12000,
+    ticketSeries: 12223,
   },
   "GI Group": {
     name: "GI Group",
     waitingRoom: "GF05",
     logo: "comp/gigroup.png",
-    ticketSeries: 13000,
+    ticketSeries: 13043,
   },
   "Team Lease": {
     name: "Team Lease",
     waitingRoom: "SF17",
     logo: "comp/teamlease.png",
-    ticketSeries: 14000,
+    ticketSeries: 14149,
   },
   "Solair X Energy": {
     name: "Solair X Energy",
     waitingRoom: "SF25",
     logo: "comp/solair.png",
-    ticketSeries: 15000,
+    ticketSeries: 15161,
   },
   Exwindoor: {
     name: "Exwindoor",
     waitingRoom: "SF21",
     logo: "comp/exwindoor.png",
-    ticketSeries: 16000,
+    ticketSeries: 16052,
   },
   "SBI Life Insurance": {
     name: "SBI Life Insurance",
     waitingRoom: "FF13",
     logo: "comp/sbilife.png",
-    ticketSeries: 17000,
+    ticketSeries: 17152,
   },
   "Pukhraj Health Care": {
     name: "Pukhraj Health Care",
     waitingRoom: "SF22",
     logo: "comp/pukhraj.png",
-    ticketSeries: 18000,
+    ticketSeries: 18170,
   },
   "Bharti Associates": {
     name: "Bharti Associates",
     waitingRoom: "FF11",
     logo: "comp/bharti.png",
-    ticketSeries: 19000,
+    ticketSeries: 19016,
   },
   "TruWorth Healthcare": {
     name: "TruWorth Healthcare",
     waitingRoom: "SF23",
     logo: "comp/truworth.png",
-    ticketSeries: 20000,
+    ticketSeries: 20034,
   },
 };
 
@@ -249,6 +249,7 @@ async function generatePDF(html, outputPath) {
     path: outputPath,
     format: "A4",
     scale: 1.35,
+    pageRanges: "1",
     printBackground: true,
   });
   await browser.close();
@@ -316,10 +317,11 @@ function writeCompanyCSV(companyName, studentData) {
 
 // Process CSV file
 async function processCSV() {
+
   const lastProcessed = getLastProcessed();
   const data = [];
   let pdfCount = 0;
-  let serialNo = 1;
+  let serialNo = 1001;
 
   // Create object to store company-wise student data
   const companyData = {};
@@ -353,10 +355,7 @@ async function processCSV() {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
-
     * {
-      margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
@@ -364,10 +363,10 @@ async function processCSV() {
     body {
       display: flex;
       flex-flow: column;
-      justify-content: center;
+      justify-content: start;
       align-items: center;
       height: 100vh;
-      font-family: "Plus Jakarta Sans";
+      font-family: "Plus Jakarta Sans", "Roboto", "Montserrat";
       background: url("data:image/png;base64,${bgvector}") no-repeat;
     }
 
